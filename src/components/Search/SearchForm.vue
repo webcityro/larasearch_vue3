@@ -181,9 +181,14 @@
 </template>
 <script>
 import { debounce, isEqual } from "lodash";
-import { mapGetters, mapActions } from "vuex";
+import { mapActions } from "vuex";
+import Checkbox from "../Form/Checkbox";
 
 export default {
+	components: {
+		Checkbox
+	},
+
 	props: {
 		group: { type: String, required: true },
 		url: { type: String, required: true },

@@ -40,8 +40,13 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
+import Modal from "../Modal";
 
 export default {
+	components: {
+		Modal
+	},
+
 	props: {
 		group: { type: String, required: true },
 		groupLabel: { type: String, required: false }

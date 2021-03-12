@@ -1,6 +1,6 @@
 {
   "name": "@webcityro/larasearch-vue3",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "The easy way to do the \"R\" in CRUD. The frontend companion to larasearch package for laravel",
   "main": "index.js",
   "scripts": {
