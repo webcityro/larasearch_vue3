@@ -226,6 +226,7 @@ export default {
 			dontSave: this.dontSave
 		}).then(params => {
 			this.fields = params;
+			this.initSearch(this.group, this.fields);
 		});
 	},
 
@@ -240,18 +241,23 @@ export default {
 			this.processing = field;
 			this.store({
 				group: this.group,
-				params: this.fields
-			}).then(() => (this.processing = false));
+				params: this.brforeSearch(this.group, this.fields) || this.fields
+			}).then(() => {
+				this.processing = false;
+				this.afterSearch(this.group, this.fields);
+			});
 		},
 
 		clear(fields, field) {
 			this.processing = field;
+			const params = { ...this.fields, ...fields };
 			this.reset({
 				group: this.group,
-				params: { ...this.fields, ...fields }
+				params: this.brforeClear(this.group, params) || params
 			}).then(value => {
 				this.fields = value;
 				this.processing = false;
+				this.afterClear(this.group, params);
 			});
 		}
 	},

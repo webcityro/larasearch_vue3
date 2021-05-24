@@ -24,7 +24,7 @@
 			:show="deleteRecord != null"
 			:url="deleteRecord ? deleteRecord.destroyURL : ''"
 			method="DELETE"
-			@save="deleteRecord = null, fetch(group)"
+			@save="afterDeleteRecord(group, deleteRecord), deleteRecord = null, fetch(group)"
 			@cancel="deleteRecord = null"
 			okButtonLabel="Delete"
 			okButtonClass="btn btn-danger"
@@ -62,11 +62,11 @@ export default {
 		...mapActions('larasearch', ['fetch']),
 
 		edit(record) {
-			EventBus.emit('editForm_'+this.group, record);
+			this.editRecord(this.group, record);
 		},
 
 		destroy(record) {
-			this.deleteRecord = record;
+			this.beforeDeleteRecord(this.group, record).then(() => this.deleteRecord = record);
 		}
 	},
 

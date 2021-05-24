@@ -14,12 +14,15 @@ const LarasearchVue = {
 		const config = {
 			apiHeaders: {},
 			...(window.Larasearch || {}),
-			...(options || {}),
+			...(options || {
+				mixin: require("./src/mixins/SearchMixin").default,
+			}),
 		};
 		delete config.store;
 
 		options.store.registerModule("larasearch", StoreModule);
 
+		vue.mixin(config.mixin);
 		vue.config.globalProperties.$larasearch = config;
 		vue.component("LarasearchForm", SearchForm);
 		vue.component("LarasearchResults", SearchResults);
