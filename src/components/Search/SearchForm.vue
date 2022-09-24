@@ -208,7 +208,8 @@
 	</form>
 </template>
 <script>
-import { debounce, isEqual } from "lodash";
+import isEqual from "lodash.isEqual";
+import debounce from "lodash.debounce";
 import { mapActions } from "vuex";
 import Checkbox from "../Form/Checkbox.vue";
 

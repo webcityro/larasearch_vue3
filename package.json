@@ -1,6 +1,6 @@
 {
   "name": "@webcityro/larasearch-vue3",
-  "version": "1.1.6",
+  "version": "1.1.61",
   "description": "The easy way to do the \"R\" in CRUD. The frontend companion to larasearch package for laravel",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,8 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "axios": "^0.21",
     "bootstrap": "^4.6.0",
-    "lodash": "^4.17.19",
+    "lodash.debounce": "^4.17.19",
+    "lodash.isEqual": "^4.17.19",
     "vue": "^3.0.5",
     "vue-loader": "^16.1.2",
     "vuex": "^4.0.0"
