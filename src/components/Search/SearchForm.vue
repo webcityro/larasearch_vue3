@@ -2,7 +2,10 @@
 	<form>
 		<ul class="nav nav-tabs">
 			<li class="nav-item">
-				<a :class="['nav-link', {active: showForm}]" href="#" @click.prevent="showForm = !showForm"
+				<a
+					:class="['nav-link', { active: showForm }]"
+					href="#"
+					@click.prevent="showForm = !showForm"
 					>Filter</a
 				>
 			</li>
@@ -19,71 +22,78 @@
 						input.label
 					}}</label>
 					<div class="col-sm-10">
-						<select
-							v-if="input.type == 'select'"
-							:id="field"
-							class="form-control"
-							v-model="fields.search[field]"
-							@input="update(field)"
-						>
-							<option
+						<slot :name="field" v-bind="slotParams">
+							<select
+								v-if="input.type == 'select'"
+								:id="field"
+								class="form-control"
+								v-model="fields.search[field]"
+								@input="update(field)"
+							>
+								<option
+									v-for="(l, v) in input.options"
+									:key="field + '_' + v"
+									:value="v"
+									:selected="fields.search[field] == v"
+								>
+									{{ l }}
+								</option>
+							</select>
+							<div
+								v-else-if="input.type == 'radio'"
 								v-for="(l, v) in input.options"
 								:key="field + '_' + v"
-								:value="v"
-								:selected="fields.search[field] == v"
+								class="form-check"
 							>
-								{{ l }}
-							</option>
-						</select>
-						<div
-							v-else-if="input.type == 'radio'"
-							v-for="(l, v) in input.options"
-							:key="field + '_' + v"
-							class="form-check"
-						>
+								<input
+									class="form-check-input"
+									type="radio"
+									:name="field"
+									:id="field + '_' + v"
+									:value="v"
+									:checked="fields.search[field] == v"
+									@input="update(field)"
+								/>
+								<label class="form-check-label" :for="field + '_' + v">
+									{{ l }}
+								</label>
+							</div>
+							<div v-else-if="input.type == 'checkbox'" class="form-check">
+								<checkbox
+									class="form-check-input"
+									:id="field"
+									:unchecked-value="input.uncheckedValue"
+									:checked="fields.search[field] != input.uncheckedValue"
+									v-model="fields.search[field]"
+									@change="update(field)"
+								/>
+								<label class="form-check-label" :for="field">
+									{{ input.checkboxLabel || input.label }}
+								</label>
+							</div>
 							<input
-								class="form-check-input"
-								type="radio"
-								:name="field"
-								:id="field + '_' + v"
-								:value="v"
-								:checked="fields.search[field] == v"
+								v-else
+								:type="input.type"
+								:id="field"
+								class="form-control"
+								v-model="fields.search[field]"
 								@input="update(field)"
 							/>
-							<label class="form-check-label" :for="field + '_' + v">
-								{{ l }}
-							</label>
-						</div>
-						<div v-else-if="input.type == 'checkbox'" class="form-check">
-							<checkbox
-								class="form-check-input"
-								:id="field"
-								:unchecked-value="input.uncheckedValue"
-								:checked="fields.search[field] != input.uncheckedValue"
-								v-model="fields.search[field]"
-								@change="update(field)"
-							/>
-							<label class="form-check-label" :for="field">
-								{{ input.checkboxLabel || input.label }}
-							</label>
-						</div>
-						<input
-							v-else
-							:type="input.type"
-							:id="field"
-							class="form-control"
-							v-model="fields.search[field]"
-							@input="update(field)"
-						/>
+						</slot>
 						<i
 							v-if="fields.search[field] && processing != field"
 							class="far fa-times-circle field-icon"
-							@click="clear({
-								search: {
-									...fields.search,
-									[field]: ''
-								}
-							}, field)"
+							@click="
+								clear(
+									{
+										search: {
+											...fields.search,
+											[field]: '',
+										},
+									},
+									field
+								)
+							"
 						></i>
 						<i
 							v-if="processing == field"
@@ -107,17 +117,25 @@
 							>
 								<!-- eslint-disable-next-line -->
 								<template v-for="(label, value) in orderBy" :key="value">
-									<option :value="value+':asc'">{{ value }} Asc</option>
-									<option :value="value+':desc'">{{ value }} Desc</option>
+									<option :value="value + ':asc'">{{ value }} Asc</option>
+									<option :value="value + ':desc'">{{ value }} Desc</option>
 								</template>
 							</select>
 							<i
-								v-if="fields.order_by != initialFields.order_by && processing != 'order_by'"
+								v-if="
+									fields.order_by != initialFields.order_by &&
+									processing != 'order_by'
+								"
 								class="far fa-times-circle opp-field-icon"
-								@click="clear({
-									...fields,
-									order_by: initialFields.order_by
-								}, 'order_by')"
+								@click="
+									clear(
+										{
+											...fields,
+											order_by: initialFields.order_by,
+										},
+										'order_by'
+									)
+								"
 							></i>
 							<i
 								v-if="processing == 'order_by'"
@@ -140,15 +158,25 @@
 									:key="value"
 									:value="value"
 									:selected="fields.per_page == value"
-								>{{ value }}</option>
+								>
+									{{ value }}
+								</option>
 							</select>
 							<i
-								v-if="fields.per_page != initialFields.per_page && processing != 'per_page'"
+								v-if="
+									fields.per_page != initialFields.per_page &&
+									processing != 'per_page'
+								"
 								class="far fa-times-circle opp-field-icon"
-								@click="clear({
-									...fields,
-									per_page: initialFields.per_page
-								}, 'per_page')"
+								@click="
+									clear(
+										{
+											...fields,
+											per_page: initialFields.per_page,
+										},
+										'per_page'
+									)
+								"
 							></i>
 							<i
 								v-if="processing == 'per_page'"
@@ -182,7 +210,7 @@
 <script>
 import { debounce, isEqual } from "lodash";
 import { mapActions } from "vuex";
-import Checkbox from "../Form/Checkbox";
+import Checkbox from "../Form/Checkbox.vue";
 
 export default {
 	components: {
@@ -217,7 +245,7 @@ export default {
 	created() {
 		this.fields = { ...this.initialFields };
 		this.init({
-			apiHeaders: this.$larasearch.apiHeaders,
+			apiConfig: this.$larasearch.apiConfig,
 			group: this.group,
 			url: this.url,
 			method: this.method,
@@ -265,7 +293,7 @@ export default {
 	computed: {
 		slotParams() {
 			return {
-				params: this.params,
+				params: this.fields,
 				update: this.update,
 				change: this.change,
 				clear: this.clear,
@@ -281,28 +309,29 @@ export default {
 </script>
 
 <style scoped>
-	.field-icon, .opp-field-icon {
-		position: absolute;
-		display: block;
-		top: calc((1.6em + 0.75rem + 2px) / 2 - 7.5px);
-		right: calc((1.6em + 0.75rem + 2px) / 2 + 0.75rem);
-		width: 15px;
-		height: 15px;
-	}
+.field-icon,
+.opp-field-icon {
+	position: absolute;
+	display: block;
+	top: calc((1.6em + 0.75rem + 2px) / 2 - 7.5px);
+	right: calc((1.6em + 0.75rem + 2px) / 2 + 0.75rem);
+	width: 15px;
+	height: 15px;
+}
 
-	.field-icon.fa-times-circle,
-	.opp-field-icon.fa-times-circle {
-		cursor: pointer;
-		transition: color 350ms ease-in-out;
-	}
+.field-icon.fa-times-circle,
+.opp-field-icon.fa-times-circle {
+	cursor: pointer;
+	transition: color 350ms ease-in-out;
+}
 
-	.field-icon.fa-times-circle:hover,
-	.opp-field-icon.fa-times-circle:hover {
-		color: var(--red);
-	}
+.field-icon.fa-times-circle:hover,
+.opp-field-icon.fa-times-circle:hover {
+	color: var(--red);
+}
 
-	.opp-field-icon {
-		top: auto;
-		bottom: calc((1.6em + 0.75rem + 2px) / 2 - 7.5px);
-	}
+.opp-field-icon {
+	top: auto;
+	bottom: calc((1.6em + 0.75rem + 2px) / 2 - 7.5px);
+}
 </style>

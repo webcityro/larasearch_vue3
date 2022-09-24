@@ -24,7 +24,7 @@ export default {
 	namespaced: true,
 
 	state: {
-		apiHeaders: {},
+		apiConfig: {},
 		params: {},
 		orderByFields: {},
 		urls: {},
@@ -61,9 +61,9 @@ export default {
 	actions: {
 		init(
 			{ state, dispatch, commit },
-			{ group, url, method, params, orderByFields, apiHeaders, dontSave }
+			{ group, url, method, params, orderByFields, apiConfig, dontSave }
 		) {
-			commit("SET_API_HEADERS", apiHeaders);
+			commit("SET_API_CONFIG", apiConfig);
 			commit("URL", {
 				group,
 				url: { url, method, loading: false },
@@ -93,7 +93,7 @@ export default {
 				url,
 				method,
 				state.params[group],
-				state.apiHeaders
+				state.apiConfig
 			).then((response) => {
 				commit("LOADING", { group, loading: false });
 				commit("SET_RECORDS", {
@@ -163,8 +163,8 @@ export default {
 	},
 
 	mutations: {
-		SET_API_HEADERS(state, apiHeaders) {
-			state.apiHeaders = apiHeaders;
+		SET_API_CONFIG(state, apiConfig) {
+			state.apiConfig = apiConfig;
 		},
 
 		SET_RECORDS(state, { group, response }) {

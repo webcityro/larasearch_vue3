@@ -36,9 +36,9 @@
 				</circle>
 			</svg>
 		</div>
-		<h3 v-else-if="currentTotal == 0" class="text-center">
-			No {{ groupLabel || "record" }}s found.
-		</h3>
+		<slot v-else-if="currentTotal == 0" name="empty">
+			<h3 class="text-center">No {{ groupLabel || "record" }}s found.</h3>
+		</slot>
 		<slot
 			v-else
 			:params="currentParams"
@@ -73,7 +73,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
-import Modal from "../Modal";
+import Modal from "../Modal.vue";
 
 export default {
 	components: {
@@ -125,7 +125,7 @@ export default {
 		},
 
 		deleteMsg() {
-			return this.deleteRecord ? 'Are you sure theat you wanna delete the ' + (this.groupLabel || 'item') + ' "' + this.deleteRecord.name + '"?' : '';
+			return this.deleteRecord ? 'Are you sure theat you wanna delete the ' + (this.groupLabel || 'item') + ' "' + this.recordName + '"?' : '';
 		},
 
 		recordName() {
@@ -136,7 +136,7 @@ export default {
 			const name = [];
 
 			this.recordNameColumn.forEach(coll => {
-				name.push(this.deleteRecord[coll]);
+				name.push(this.deleteRecord?.[coll]);
 			});
 
 			return name.join(' ');
